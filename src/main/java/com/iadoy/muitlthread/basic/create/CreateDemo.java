@@ -2,6 +2,9 @@ package com.iadoy.muitlthread.basic.create;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 创建线程方式1：继承Thread类
+ */
 @Slf4j
 public class CreateDemo {
 
@@ -16,9 +19,10 @@ public class CreateDemo {
         @Override
         public void run() {
             for (int i = 0; i < MAX_TURN; i++){
-                log.info(Thread.currentThread().getName() + "-" + i);
+                log.info(getName() + "-" + i);
             }
-            log.info(Thread.currentThread().getName() + " is end.");
+            //这里可以直接调用Thread父类的方法获取线程名称
+            log.info(getName() + " is finished.");
         }
     }
 
@@ -28,7 +32,6 @@ public class CreateDemo {
             thread = new DemoThread();
             thread.start();
         }
-        //这一句总是最先输出
-        log.info(Thread.currentThread().getName() + " is end.");
+        log.info(Thread.currentThread().getName() + " is finished.");
     }
 }
