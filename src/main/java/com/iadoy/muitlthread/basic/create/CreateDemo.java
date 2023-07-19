@@ -28,6 +28,7 @@ public class CreateDemo {
             thread = new DemoThread();
             thread.start();
         }
+        //这一句总是最先输出
         log.info(Thread.currentThread().getName() + " is end.");
     }
 }
