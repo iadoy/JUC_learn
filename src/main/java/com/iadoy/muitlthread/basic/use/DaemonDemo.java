@@ -2,6 +2,7 @@ package com.iadoy.muitlthread.basic.use;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
 
 /**
  * 守护线程示例代码
@@ -41,7 +42,7 @@ public class DaemonDemo {
             for (int i = 0; i < MAX_TURN; i++){
                 log.info(">>turns: {}, daemon: {}", i, Thread.currentThread().isDaemon());
                 try {
-                    Thread.sleep(SLEEP_GAP);
+                    Thread.sleep(SLEEP_GAP * 10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -49,9 +50,24 @@ public class DaemonDemo {
             log.info("user thread is FINISHED.");
         }, "userThread");
         userThread.start();
+        userThread.setDaemon(true);
 
         //输出一下main线程是否是守护线程
         log.info("daemon: {}", Thread.currentThread().isDaemon());
         log.info("FINISHED!!!");
+    }
+
+    /**
+     * 测试将运行中的守护线程修改为用户线程
+     * 结果：会抛出IllegalThreadStateException异常
+     */
+    @Test
+    public void test() throws InterruptedException {
+        Thread dThread = new DaemonThread();
+        dThread.start();
+
+        dThread.setDaemon(false);
+
+        Thread.sleep(1000000);
     }
 }
