@@ -35,7 +35,7 @@ public class JoinDemo {
         log.info("start thread1.");
         thread1.start();
         try {
-            //限时合并thread1
+            //合并thread1，且不指定最长等待时间
             //这将导致main线程处于WAITING状态
             thread1.join();
         } catch (InterruptedException e) {
