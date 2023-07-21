@@ -35,6 +35,8 @@ public class JoinDemo {
         log.info("start thread1.");
         thread1.start();
         try {
+            //限时合并thread1
+            //这将导致main线程处于WAITING状态
             thread1.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -44,7 +46,9 @@ public class JoinDemo {
         log.info("start thread2.");
         thread2.start();
         try {
-            thread2.join();
+            //限时合并thread2
+            //这将导致main线程处于TIMED_WAITING状态
+            thread2.join(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
