@@ -118,4 +118,37 @@ public class CreateThreadPoolDemo {
         Thread.sleep(10 * 1000);
         pool.shutdown();
     }
+
+    /**
+     * 演示线程池的不合理配置导致任务无法执行
+     */
+    @Test
+    public void testWrongConfigExecutor() throws InterruptedException {
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(
+                1,
+                100,
+                100,
+                TimeUnit.SECONDS,
+                new LinkedBlockingDeque<>(100)
+        );
+        for (int i = 0; i < 5; i++){
+            final int taskIndex = i;
+            pool.execute(() -> {
+                log.info("task index={}", taskIndex);
+                try {
+                    //模拟线程长期无法完成
+                    Thread.sleep(Long.MAX_VALUE);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        //每秒输出一次线程池的状态
+        while (true){
+            log.info("active count:{}, task count:{}", pool.getActiveCount(), pool.getTaskCount());
+            Thread.sleep(1000);
+        }
+    }
+
+
 }
