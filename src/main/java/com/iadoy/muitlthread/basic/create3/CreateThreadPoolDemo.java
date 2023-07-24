@@ -180,5 +180,52 @@ public class CreateThreadPoolDemo {
         pool.shutdown();
     }
 
+    /**
+     * 演示ThreadPoolExecutor的三个钩子函数
+     */
+    //线程本地变量,用于记录线程异步任务的开始执行时间
+    private static final ThreadLocal<Long> START_TIME = new ThreadLocal<>();
+
+    @Test
+    public void testHooks() throws InterruptedException {
+        //这里创建的不是ThreadPoolExecutor，是匿名内部类，重写了三个方法
+        ExecutorService pool = new ThreadPoolExecutor(2, 4, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>(2)) {
+
+            //继承：调度器终止钩子
+            @Override
+            protected void terminated() {
+                log.info("调度器已经终止!");
+            }
+
+            //继承：执行前钩子
+            @Override
+            protected void beforeExecute(Thread t, Runnable target) {
+                log.info("前钩被执行!");
+                //记录开始执行时间
+                START_TIME.set(System.currentTimeMillis());
+                super.beforeExecute(t, target);
+            }
+
+            //继承：执行后钩子
+            @Override
+            protected void afterExecute(Runnable target, Throwable t) {
+                super.afterExecute(target, t);
+                //计算执行时长
+                long time = (System.currentTimeMillis() - START_TIME.get()) ;
+                log.info("{}后钩被执行, 任务执行时长（ms）：{}", target, time);
+                //清空本地变量
+                START_TIME.remove();
+            }
+        };
+
+        for (int i = 1; i <= 5; i++) {
+            pool.execute(new TargetTask());
+        }
+        //等待10秒
+        Thread.sleep(10000);
+        log.info("结束");
+        pool.shutdown();
+    }
+
 
 }
