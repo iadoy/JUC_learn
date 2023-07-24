@@ -227,5 +227,27 @@ public class CreateThreadPoolDemo {
         pool.shutdown();
     }
 
+    /**
+     * 自定义拒绝策略，拒绝时输出条日志
+     */
+    class MyRejectHandler implements RejectedExecutionHandler{
 
+        @Override
+        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+            log.warn("task {} is discarded. task count: {}", r, executor.getTaskCount());
+        }
+    }
+
+    @Test
+    public void testCustomReject() throws InterruptedException {
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 4, 10, TimeUnit.SECONDS, new LinkedBlockingDeque<>(2), new MyThreadFactory(), new MyRejectHandler());
+        //预启动所有核心线程
+        pool.prestartAllCoreThreads();
+        for (int i = 0; i < 10; i++){
+            pool.execute(new TargetTask());
+        }
+        Thread.sleep(10000);
+        log.info("关闭线程池");
+        pool.shutdown();
+    }
 }
