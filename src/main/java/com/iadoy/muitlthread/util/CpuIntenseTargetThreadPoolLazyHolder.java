@@ -31,9 +31,13 @@ public class CpuIntenseTargetThreadPoolLazyHolder {
     static {
         //允许核心线程超时关闭
         EXECUTOR.allowCoreThreadTimeOut(true);
-        Runtime.getRuntime().addShutdownHook(new ShutdownHookThread("IO密集型任务线程池", () -> {
+        Runtime.getRuntime().addShutdownHook(new ShutdownHookThread("CPU密集型任务线程池", () -> {
             ThreadUtil.shutdownThreadPoolGracefully(EXECUTOR);
             return null;
         }));
+    }
+
+    public static ThreadPoolExecutor getInnerExecutor() {
+        return EXECUTOR;
     }
 }
