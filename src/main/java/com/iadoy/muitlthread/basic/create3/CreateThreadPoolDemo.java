@@ -150,5 +150,35 @@ public class CreateThreadPoolDemo {
         }
     }
 
+    public class MyThreadFactory implements ThreadFactory{
+        AtomicInteger threadNo = new AtomicInteger(0);
+
+        @Override
+        public Thread newThread(Runnable target) {
+            String threadName = "myThread-" + threadNo.incrementAndGet();
+            //创建并配置线程
+            Thread thread = new Thread(target, threadName);
+            thread.setPriority(8);
+            log.info("创建一个线程：{}", threadName);
+            return thread;
+        }
+    }
+
+    /**
+     * 演示使用自定义的ThreadFactory创建线程池
+     * @throws InterruptedException
+     */
+    @Test
+    public void testCustomThreadFactory() throws InterruptedException {
+        //使用自定义的线程工厂创建线程池
+        ExecutorService pool = Executors.newFixedThreadPool(2, new MyThreadFactory());
+        for (int i = 0; i < 5; i++){
+            pool.submit(new TargetTask());
+        }
+        Thread.sleep(10 * 1000);
+        log.info("关闭线程池");
+        pool.shutdown();
+    }
+
 
 }
