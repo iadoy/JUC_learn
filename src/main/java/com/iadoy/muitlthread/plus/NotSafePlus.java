@@ -9,9 +9,15 @@ import java.util.concurrent.CountDownLatch;
  */
 @Slf4j
 public class NotSafePlus {
-    private Integer amount = 0;
+    private Integer amount = 0; //临界资源
 
+    //临界代码块
     public void selfPlus(){
+        amount++;
+    }
+
+    //使用synchronized关键字
+    public synchronized void selfPlusSync(){
         amount++;
     }
 
@@ -22,8 +28,8 @@ public class NotSafePlus {
     public static void main(String[] args) throws InterruptedException {
 
         final int MAX_THREAD = 10;
-        final int MAX_TURN = 1_000;
-        final int TARGET = 10_000;
+        final int MAX_TURN = 1_000_000;
+        final int TARGET = 10_000_000;
 
         CountDownLatch latch = new CountDownLatch(MAX_THREAD);
         NotSafePlus counter = new NotSafePlus();
@@ -31,7 +37,8 @@ public class NotSafePlus {
         for (int i = 0; i < MAX_THREAD; i++){
             new Thread(() -> {
                 for (int j = 0; j < MAX_TURN; j++){
-                    counter.selfPlus();
+//                    counter.selfPlus();
+                    counter.selfPlusSync();
                 }
                 //倒数闩减一
                 latch.countDown();
