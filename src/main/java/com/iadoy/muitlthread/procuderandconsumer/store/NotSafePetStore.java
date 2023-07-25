@@ -1,6 +1,11 @@
 package com.iadoy.muitlthread.procuderandconsumer.store;
 
+import com.iadoy.muitlthread.procuderandconsumer.Consumer;
+import com.iadoy.muitlthread.procuderandconsumer.Producer;
+
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -25,4 +30,18 @@ public class NotSafePetStore {
         Integer producerId = notSafeDataBuffer.fetch();
         return producerId;
     };
+
+    public static void main(String[] args) {
+        System.setErr(System.out);
+
+        final int THREAD_TOTAL = 20;
+        ExecutorService pool = Executors.newFixedThreadPool(THREAD_TOTAL);
+
+        //向线程池中提交生产者、消费者各5个
+        //生产者速度大于消费者速度
+        for (int i = 0; i < 5; i++){
+            pool.submit(new Producer(produceAction, 500));
+            pool.submit(new Consumer(consumerAction, 1500));
+        }
+    }
 }
