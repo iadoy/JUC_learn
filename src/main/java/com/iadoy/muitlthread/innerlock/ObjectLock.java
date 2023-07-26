@@ -86,7 +86,7 @@ public class ObjectLock {
     /**
      * 测试偏向锁时一定不能使用上面的 printSelf() 方法
      * 因为它调用了没有重写的 hashCode() 方法，使得对象头中有了哈希值
-     * 这回导致该对象的内置锁无法成为偏向锁，而是会从无锁直接升级成轻量级锁
+     * 这会导致该对象的内置锁无法成为偏向锁，而是会从无锁直接升级成轻量级锁
      */
     public void printStruct(){
         String printTable = ClassLayout.parseInstance(this).toPrintable();
