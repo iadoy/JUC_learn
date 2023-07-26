@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 不安全的数据缓冲区
+ * 安全的数据缓冲区
  * @param <T>
  */
 @Slf4j
-public class NotSafeDataBuffer<T> {
+public class SafeDataBuffer<T> {
     public static final int MAX_AMOUNT = 10;
     private List<T> dataList = new LinkedList<>();
     //保存数量
     private AtomicInteger amount = new AtomicInteger(0);
 
-    public void add(T element) throws Exception {
+    public synchronized void add(T element) throws Exception {
         if (amount.get() >= MAX_AMOUNT){
             log.info("队列已经满了");
             return;
@@ -32,7 +32,7 @@ public class NotSafeDataBuffer<T> {
         }
     }
 
-    public T fetch() throws Exception {
+    public synchronized T fetch() throws Exception {
         if (amount.get() <= 0){
             log.info("队列已经空了");
             return null;
